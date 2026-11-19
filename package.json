@@ -1,0 +1,27 @@
+{
+  "name": "vtx",
+  "version": "1.0.0",
+  "description": "Send and track Base validity transactions block by block",
+  "scripts": {
+    "vtx": "tsx src/vtx.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "viem": "^2.58.0",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  },
+  "bin": {
+    "vtx": "./bin/vtx.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
