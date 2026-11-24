@@ -1,0 +1,2 @@
+
+[31m[1mREJECTED[0m[0m: rejected at submit: block-number predicate at index 1 already expired: last satisfiable block 61012191 has already been built (code -32602)

@@ -7,21 +7,30 @@ import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { parseArgs } from 'node:util'
 import {
-  createPublicClient, http, parseEther, parseGwei, formatGwei, formatEther, parseTransaction,
+  createPublicClient, defineChain, http, parseEther, parseGwei, formatGwei, formatEther, parseTransaction,
   recoverTransactionAddress, keccak256, type Hex, type Address, type PublicClient,
 } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { base, baseSepolia } from 'viem/chains'
+import { chainConfig } from 'viem/op-stack'
 
 // ---------- config ----------
 
-type Net = 'mainnet' | 'sepolia'
+// OP-stack formatters tag deposit txs, so they don't count as user txs in the min-tip check.
+const vibenet = defineChain({
+  ...chainConfig, id: 84538453, name: 'Vibenet', nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: { default: { http: ['https://rpc.vibes.base.org'] } },
+})
+
+type Net = 'vibenet' | 'sepolia' | 'mainnet'
 const NETS = {
-  mainnet: { chain: base, rpc: 'https://mainnet.base.org', seq: 'https://mainnet-sequencer.base.org', status: true },
+  vibenet: { chain: vibenet, rpc: 'https://rpc.vibes.base.org', seq: 'https://rpc.vibes.base.org', status: true },
   sepolia: { chain: baseSepolia, rpc: 'https://sepolia.base.org', seq: 'https://sepolia-sequencer.base.org', status: false },
+  mainnet: { chain: base, rpc: 'https://mainnet.base.org', seq: 'https://mainnet-sequencer.base.org', status: true },
 } as const
 const STORE = join(homedir(), '.vtx', 'txs')
 const BLOCK_MS = 200n
+const DROP_MARGIN = 25n // blocks (~5s): Unknown this close to expiry is the pool's expiry eviction, not a drop
 const PREFETCH = 8n
 const WINDOW_BLOCKS = 300n // sequencer max validity window, 60s of 200ms blocks
 
@@ -363,7 +372,9 @@ async function track(rec: Record, o: { json: boolean; quiet: boolean; timeoutS?:
       verdict = 'REPLACED' // nonce used in a block before the replay window
     } else if (expiry !== null && target >= expiry) {
       verdict = eligibleBlocks > 0 ? (nonceGapBlocks === eligibleBlocks ? 'EXPIRED_NONCE_GAP' : 'EXPIRED_WHILE_ELIGIBLE') : rows.some(r => r.arrived) ? 'EXPIRED_PREDICATE_FALSE' : 'EXPIRED_BEFORE_ARRIVAL'
-    } else if (cfg.status && everKnown && status === 'Unknown') {
+    } else if (cfg.status && everKnown && status === 'Unknown' && (expiry === null || expiry - target > DROP_MARGIN) &&
+      (tx.nonce === undefined || await c.getTransactionCount({ address: rec.from, blockTag: 'latest' }) <= tx.nonce)) {
+      // The pool also evicts at expiry and on replacement; those keep replaying to their own verdict.
       verdict = 'DROPPED'
     }
     if (key === lastKey && !inThis && !verdict) { repeat++; repeatTo = target }
@@ -447,9 +458,10 @@ async function track(rec: Record, o: { json: boolean; quiet: boolean; timeoutS?:
 const HELP = `vtx: send and track Base validity transactions
 
   vtx send [options]            sign, submit and track a validity tx
-    --net mainnet|sepolia       default sepolia
+    --net vibenet|sepolia|mainnet  default vibenet
     --to ADDR --value ETH --data HEX --gas N --tip GWEI (default 0.001)
-    -p, --predicate EXPR        repeatable. balance:ADDR>=VAL  nonce:ADDR=VAL
+                                no --to: a 0-value transfer to yourself
+    -p, --predicate EXPR        repeatable. balance:ADDR>=VAL  nonce:ADDR=VAL (VAL in wei)
                                 storage:ADDR:SLOT[&MASK]<=VAL  block<=N
                                 append ' #name' to label it in the output (local only)
     --validity JSON|FILE        predicate array in RPC format
@@ -473,7 +485,7 @@ async function main() {
   const { values: v, positionals } = parseArgs({
     allowPositionals: true,
     options: {
-      net: { type: 'string', default: 'sepolia' }, to: { type: 'string' }, value: { type: 'string' },
+      net: { type: 'string', default: 'vibenet' }, to: { type: 'string' }, value: { type: 'string' },
       data: { type: 'string' }, gas: { type: 'string' }, tip: { type: 'string' }, nonce: { type: 'string' },
       predicate: { type: 'string', short: 'p', multiple: true, default: [] }, validity: { type: 'string' },
       expire: { type: 'string', default: '50' }, plain: { type: 'boolean', default: false },

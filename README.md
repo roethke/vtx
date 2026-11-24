@@ -13,13 +13,31 @@ npm install -g github:roethke/vtx
 vtx --help
 ```
 
-From a clone: `npm install && npm link`, or run without installing via `npx tsx src/vtx.ts`.
+From a clone: `npm install && npm link`, or run without installing via `npx tsx src/vtx.ts`. An esbuild install-script warning during `npm install` is harmless.
+
+## Quickstart on Vibenet
+
+Vibenet (chain ID 84538453, RPC `https://rpc.vibes.base.org`) is the default network. `vtx` signs locally with a key you give it; it never creates or uploads keys.
+
+```bash
+# 1. Make a throwaway key (Foundry's cast; any hex private key works)
+mkdir -p ~/.vtx && cast wallet new | awk '/Private key/{print $3}' > ~/.vtx/key && chmod 600 ~/.vtx/key
+cast wallet address --private-key "$(cat ~/.vtx/key)"
+
+# 2. Fund that address from the Vibenet faucet: https://chain.base.org/vibenet/faucet
+
+# 3. Send a 0-value self-transfer held until your balance is at least 0.01 ETH, then track it
+vtx send --key-file ~/.vtx/key -p 'balance:0xYourAddr>=10000000000000000'
+vtx show 0xHASH
+```
+
+Predicate values are in wei (0.01 ETH = `10000000000000000`). Without `--to`, `vtx send` sends a 0-value transfer to yourself, which is enough to watch predicates work.
 
 ## Send and track
 
 ```bash
-# Sepolia self-transfer, held until the sender's balance is at least 0.01 ETH, expires 50 blocks out
-vtx send --net sepolia -p 'balance:0xYourAddr>=10000000000000000'
+# Self-transfer on Base Sepolia, held until the sender's balance is at least 0.01 ETH, expires 50 blocks out
+vtx send --net sepolia --key-file ~/.vtx/key -p 'balance:0xYourAddr>=10000000000000000'
 
 # Storage predicate with a mask, explicit expiry
 vtx send -p 'storage:0xPool:0x0&0xff<=0x2a' -p 'block<=41203200'
@@ -28,7 +46,7 @@ vtx send -p 'storage:0xPool:0x0&0xff<=0x2a' -p 'block<=41203200'
 vtx send --plain
 ```
 
-Key: `--key-file PATH` (a file holding the hex private key) or the `PK` env var. `--key-file` wins when both are set. Default network is `sepolia`; pass `--net mainnet` for mainnet.
+Key: `--key-file PATH` (a file holding the hex private key) or the `PK` env var. `--key-file` wins when both are set. Default network is `vibenet`; pass `--net sepolia` or `--net mainnet` for the others.
 
 Label predicates with ` #name` (local only, never sent) so the output names each link of a long chain:
 
@@ -81,7 +99,7 @@ Without a send record, replay starts at the inclusion block if the tx landed, or
 | `EXPIRED_NONCE_GAP` | Predicates held, but an earlier sender nonce never landed, so the tx could not execute |
 | `EXPIRED_BEFORE_ARRIVAL` | Every block up to expiry started building before the tx reached the sequencer |
 | `REPLACED` | Another tx used the same sender nonce (named when it's in the replayed range) |
-| `DROPPED` | Sequencer reported `Unknown` before expiry (mainnet only: `base_transactionStatus` isn't open on Sepolia) |
+| `DROPPED` | Sequencer reported `Unknown` before expiry (Vibenet and mainnet: `base_transactionStatus` isn't open on Sepolia) |
 | `REJECTED` | The submit call returned an error |
 | `TIMEOUT` | Still pending when tracking stopped |
 
@@ -89,14 +107,15 @@ Without a send record, replay starts at the inclusion block if the tx landed, or
 
 ## Tests
 
-`K1=./key1 K2=./key2 scripts/e2e-sepolia.sh` runs every verdict on Base Sepolia and checks each against the onchain receipt and nonce (~17 cases, ~5 min; K2 needs only a small balance). `K1=./key1 scripts/compare.sh 10 0.0001 0.001 0.01` runs paired validity vs plain sends per tip.
+`K1=./key1 K2=./key2 scripts/e2e.sh` runs every verdict on Vibenet and checks each against the onchain receipt and nonce (~17 cases, ~5 min; K2 needs only a small balance). Set `NET=sepolia` to run it on Base Sepolia; the flashblock rejection case runs only there. `K1=./key1 scripts/compare.sh 10 0.0001 0.001 0.01` runs paired validity vs plain sends per tip. Every script takes `NET=vibenet|sepolia` (default `vibenet`).
 
-`K1=./key1 K2=./key2 scripts/scenarios-sepolia.sh` runs five trading scenarios against a counter contract standing in for a pool: a backrun on a price move, a 7-predicate quote whose price band breaks late, a deadline that has already passed, a resting quote cancelled by a same-nonce tx, and a second leg sent without the first.
+`scripts/scenarios.sh --dry-run` previews them with no keys and nothing sent: each scenario's setup, the exact `vtx` command, and the output from a recorded Sepolia run (`--dry-run 2` for one). `K1=./key1 K2=./key2 scripts/scenarios.sh` runs the five trading scenarios for real against a counter contract standing in for a pool: a backrun on a price move, a 7-predicate quote whose price band breaks late, a deadline that has already passed, a resting quote cancelled by a same-nonce tx, and a second leg sent without the first.
 
 ## Limits
 
 - Predicates are checked against state at the end of the previous block. The builder checks against state mid-block, so a tx earlier in the same block can flip a result.
 - A tx counts as arrived for block B only if the sequencer's reply to the submit came back more than 200ms before B's timestamp (one 200ms block). Reply time, not send time: on Sepolia, inclusion needed ack ≤ ts − 134ms and blocks with ack up to ts − 134ms didn't include it, so send time overcounts by a round trip (~150ms). Clock skew on your machine shifts this.
 - On Sepolia `base_transactionStatus` is not open, so a tx the sequencer dropped looks the same as one it held: `EXPIRED_WHILE_ELIGIBLE` there can also mean dropped.
-- Resubmitting the exact same signed tx after it expired is silently ignored by the sequencer (it returns the hash and never includes it). Predicates aren't signed, so the same nonce, fee and call give the same hash: `vtx send` bumps the max fee by 1 wei when a hash is already in `~/.vtx/txs`. Do the same in your own sender.
+- On Base Sepolia, resubmitting the exact same signed tx within ~2 minutes of the first send is silently ignored (the RPC returns the hash and never includes it); on Vibenet the same resubmit landed. Predicates aren't signed, so the same nonce, fee and call give the same hash: `vtx send` bumps the max fee by 1 wei when a hash is already in `~/.vtx/txs`. Do the same in your own sender.
+- Base Sepolia rejects `flashblock_index` predicates at submit. Vibenet accepts them, but the tx did not land. vtx doesn't evaluate `flashblock_index`, so such a tx shows as `EXPIRED_WHILE_ELIGIBLE`.
 - The builder's reason for skipping an eligible tx isn't public.
