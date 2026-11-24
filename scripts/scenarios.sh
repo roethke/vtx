@@ -17,7 +17,7 @@ case $NET in
   sepolia) R=https://sepolia.base.org; CHAIN=84532; FEE=0.02gwei; INV=500000000000000000; INV_ETH=0.5 ;;
   *) echo "NET must be vibenet or sepolia"; exit 2 ;;
 esac
-export FORCE_COLOR=${FORCE_COLOR:-1}
+export FORCE_COLOR=${FORCE_COLOR-1}
 title() { printf '\n\033[1m━━ %s\033[0m\n%s\n\n' "$1" "$2"; }
 
 if [ -n "$DRY" ]; then

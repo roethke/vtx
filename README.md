@@ -113,9 +113,14 @@ Without a send record, replay starts at the inclusion block if the tx landed, or
 
 ## Limits
 
-- Predicates are checked against state at the end of the previous block. The builder checks against state mid-block, so a tx earlier in the same block can flip a result.
+- Predicates are checked against state at the end of the previous block. The builder checks against state mid-block, so a tx earlier in the same block can flip a result. vtx flags both directions: an inclusion the block made possible, and an eligible block where state the tx watches changed within that block (the other tx likely ran first).
 - A tx counts as arrived for block B only if the sequencer's reply to the submit came back more than 200ms before B's timestamp (one 200ms block). Reply time, not send time: on Sepolia, inclusion needed ack ≤ ts − 134ms and blocks with ack up to ts − 134ms didn't include it, so send time overcounts by a round trip (~150ms). Clock skew on your machine shifts this.
 - On Sepolia `base_transactionStatus` is not open, so a tx the sequencer dropped looks the same as one it held: `EXPIRED_WHILE_ELIGIBLE` there can also mean dropped.
 - On Base Sepolia, resubmitting the exact same signed tx within ~2 minutes of the first send is silently ignored (the RPC returns the hash and never includes it); on Vibenet the same resubmit landed. Predicates aren't signed, so the same nonce, fee and call give the same hash: `vtx send` bumps the max fee by 1 wei when a hash is already in `~/.vtx/txs`. Do the same in your own sender.
-- Base Sepolia rejects `flashblock_index` predicates at submit. Vibenet accepts them, but the tx did not land. vtx doesn't evaluate `flashblock_index`, so such a tx shows as `EXPIRED_WHILE_ELIGIBLE`.
+- Base Sepolia rejects `flashblock_index` predicates at submit. Vibenet accepts them, but the tx did not land. vtx can't read `flashblock_index`, so it shows as `?` / `n/a`, counts as holding, and such a tx shows as `EXPIRED_WHILE_ELIGIBLE`.
+- Predicate count: Base Sepolia allows 16 per tx, Vibenet 64 (checked 2026-11-23).
+- Both networks accept decimal value strings (`"49"` reads as 49) as well as 0x hex; Vibenet also accepts bare JSON numbers. Send 0x hex: it's the documented form.
+- Unsatisfiable sets pass submit (eg, `block>=N+41` with `block<=N+40`, or a storage value both `>=v+1` and `<=v`). The tx sits until expiry; vtx reports `EXPIRED_PREDICATE_FALSE`.
+- An unexpired validity tx holds its nonce without counting in the `pending` nonce. `vtx send` waits for its own held txs (from `~/.vtx/txs`) to land or expire before reusing the nonce; pass `--nonce` to replace one.
+- The public Base Sepolia RPC can trail the sequencer by 2+ blocks, so a tight `block<=head+N` built from it can be rejected as already built.
 - The builder's reason for skipping an eligible tx isn't public.

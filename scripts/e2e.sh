@@ -82,7 +82,8 @@ head=$(cast block-number --rpc-url $R)
 # Sepolia rejects flashblock_index since Denim; Vibenet still accepts it at submission, so only Sepolia checks it
 [ $NET = sepolia ] && run reject-flashblock REJECTED none --validity "[{\"type\":\"flashblock_index\",\"params\":{\"op\":\"<=\",\"value\":\"0x3\"}}]"
 run reject-far-expiry REJECTED none -p "block<=$((head+1000))"
-run reject-no-upper REJECTED none -p "block>=1"
+# a lower bound alone: vtx adds its own upper bound (expiry), so the sequencer accepts it
+run lower-only-expiry INCLUDED success -p "block>=1"
 run reject-bad-op REJECTED none --validity "[{\"type\":\"balance\",\"params\":{\"address\":\"$A1\",\"op\":\"=>\",\"value\":\"0x1\"}},{\"type\":\"block_number\",\"params\":{\"op\":\"<=\",\"value\":\"$(cast to-hex $((head+40)))\"}}]"
 
 # track --body for a tx sent outside vtx

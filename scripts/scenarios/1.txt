@@ -1,12 +1,13 @@
-[1msent[0m [36m0xd309420f…47d0[0m
-[2m  from 0xYOU nonce 117, tip 0.001 gwei, head block 61011958[0m
+[1msent[0m [36m0x15d21f77…c44c[0m
+[2m  from 0xYOU nonce 189, tip 0.001 gwei, head block 62740875[0m
   predicates [2m(all must hold in the same block)[0m:
-    [1m1[0m  price moved  storage[0xPOOL][0x0] > 554
-    [1m2[0m  expiry       block <= 61012008
-  expires after block 61012008
-[2mblock[0m 61011959  [31m1✗[0m [32m2✓[0m  [31m#1 price moved[0m: 554, want > 554  [2m[[0m[2mnot yet arrived[0m[2m, [0m[2mno user txs[0m[2m][0m
-[2m  ⋮ same for 2 more blocks (through 61011961)[0m
-[2mblock[0m 61011962  [31m1✗[0m [32m2✓[0m  [31m#1 price moved[0m: 554, want > 554  [2m[[0m[2mmin tip 0.001[0m[2m][0m
-[2mblock[0m 61011963  [32m[1mINCLUDED[0m[0m[2m (at block start: [31m1✗[0m [32m2✓[0m; a tx earlier in this block made them true)[0m
+    [1m1[0m  price moved  storage[0xPOOL][0x0] > 0
+    [1m2[0m  expiry       block <= 62740925
+  expires after block 62740925
+[2mblock[0m 62740876  [31m1✗[0m [32m2✓[0m  [31m#1 price moved[0m: 0, want > 0  [2m[[0m[2mnot yet arrived[0m[2m, [0m[2mmin tip 0.00001[0m[2m][0m
+[2m  ⋮ same for 2 more blocks (through 62740878)[0m
+[2mblock[0m 62740879  [31m1✗[0m [32m2✓[0m  [31m#1 price moved[0m: 0, want > 0  [2m[[0m[2mmin tip 0.001[0m[2m][0m
+[2m  ⋮ same for 3 more blocks (through 62740882)[0m
+[2mblock[0m 62740883  [32m[1mINCLUDED[0m[0m[2m (at block start: [31m1✗[0m [32m2✓[0m; a tx earlier in this block made them true)[0m
 
-[32m[1mINCLUDED[0m[0m: included in block 61011963 (+5 blocks after head 61011958). Predicates were false at the start of block 61011963 and a tx earlier in that block made them true
+[32m[1mINCLUDED[0m[0m: included in block 62740883 (+8 blocks after head 62740875). Predicates were false at the start of block 62740883 and a tx earlier in that block made them true

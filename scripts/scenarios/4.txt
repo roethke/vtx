@@ -1,17 +1,18 @@
-[1msent[0m [36m0x9d8f59a9…7a1a[0m
-[2m  from 0xYOU nonce 118, tip 0.001 gwei, head block 61012209[0m
+[1msent[0m [36m0x262451b4…b8e3[0m
+[2m  from 0xYOU nonce 190, tip 0.001 gwei, head block 62741047[0m
   predicates [2m(all must hold in the same block)[0m:
-    [1m1[0m  price >= 676  storage[0xPOOL][0x0] >= 676
-    [1m2[0m  expiry        block <= 61012269
-  expires after block 61012269
-[2mblock[0m 61012210  [31m1✗[0m [32m2✓[0m  [31m#1 price >= 676[0m: 576, want >= 676  [2m[[0m[2mnot yet arrived[0m[2m, [0m[2mmin tip 0.001[0m[2m][0m
-[2mblock[0m 61012211  [31m1✗[0m [32m2✓[0m  [31m#1 price >= 676[0m: 576, want >= 676  [2m[[0m[2mmin tip 0.001[0m[2m][0m
-[2m  ⋮ same for 5 more blocks (through 61012216)[0m
-[2mblock[0m 61012217  [31m1✗[0m [32m2✓[0m  [31m#1 price >= 676[0m: 576, want >= 676  [2m[[0m[2mmin tip 0.001[0m[2m][0m
+    [1m1[0m  price >= 122  storage[0xPOOL][0x0] >= 122
+    [1m2[0m  expiry        block <= 62741107
+  expires after block 62741107
+[2mblock[0m 62741048  [31m1✗[0m [32m2✓[0m  [31m#1 price >= 122[0m: 22, want >= 122  [2m[[0m[2mnot yet arrived[0m[2m, [0m[2mmin tip 0.000895[0m[2m][0m
+[2m  ⋮ same for 1 more block (through 62741049)[0m
+[2mblock[0m 62741050  [31m1✗[0m [32m2✓[0m  [31m#1 price >= 122[0m: 22, want >= 122  [2m[[0m[2mmin tip 0.001[0m[2m][0m
+[2m  ⋮ same for 4 more blocks (through 62741054)[0m
+[2mblock[0m 62741055  [31m1✗[0m [32m2✓[0m  [31m#1 price >= 122[0m: 22, want >= 122  [2m[[0m[2mmin tip 0.001[0m[2m][0m
 
-[33m[1mREPLACED[0m[0m: sender nonce 118 was used by 0x3ecf0996…73cb
+[33m[1mREPLACED[0m[0m: sender nonce 190 was used by 0x9b161b96…caf2
 
-[1mpredicate chain[0m[2m (7 blocks after arrival; all held together in 0)[0m
+[1mpredicate chain[0m[2m (6 blocks after arrival; all held together in 0)[0m
 [2m  #  name          held       first ✗     last value vs target[0m
-  1  price >= 676  [31m0/7      [0m  61012211    [31m576 vs >= 676[0m
-  2  expiry        [32m7/7      [0m  -           61012217 vs <= 61012269
+  1  price >= 122  [31m0/6      [0m  62741050    [31m22 vs >= 122[0m
+  2  expiry        [32m6/6      [0m  -           62741055 vs <= 62741107

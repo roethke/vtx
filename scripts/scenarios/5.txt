@@ -1,19 +1,19 @@
-[1msent[0m [36m0x58da7f56…09c8[0m
-[2m  from 0xYOU nonce 120, tip 0.001 gwei, head block 61012233[0m
+[1msent[0m [36m0x130ba63a…98bd[0m
+[2m  from 0xYOU nonce 192, tip 0.001 gwei, head block 62741062[0m
   predicates [2m(all must hold in the same block)[0m:
     [1m1[0m  funded  balance(0xYOU) >= 0.000000000000000001 ETH
-    [1m2[0m  expiry  block <= 61012263
-  expires after block 61012263
-[2mblock[0m 61012234  [32m1✓[0m [32m2✓[0m  [2m[[0m[2mnot yet arrived[0m[2m, [0m[2m[33mnonce gap: sender at 119, tx nonce 120[0m[0m[2m, [0m[2mmin tip 0.001[0m[2m][0m
-[2m  ⋮ same for 2 more blocks (through 61012236)[0m
-[2mblock[0m 61012237  [32m1✓[0m [32m2✓[0m[32m  all hold[0m  [2m[[0m[2m[33mnonce gap: sender at 119, tx nonce 120[0m[0m[2m, [0m[2mmin tip 0.001[0m[2m][0m
-[2m  ⋮ same for 25 more blocks (through 61012262)[0m
-[2mblock[0m 61012263  [32m1✓[0m [32m2✓[0m[32m  all hold[0m  [2m[[0m[2m[33mnonce gap: sender at 119, tx nonce 120[0m[0m[2m, [0m[2mmin tip 0.001[0m[2m][0m
+    [1m2[0m  expiry  block <= 62741092
+  expires after block 62741092
+[2mblock[0m 62741063  [32m1✓[0m [32m2✓[0m  [2m[[0m[2mnot yet arrived[0m[2m, [0m[2m[33mnonce gap: sender at 191, tx nonce 192[0m[0m[2m, [0m[2mmin tip 0.001[0m[2m][0m
+[2m  ⋮ same for 1 more block (through 62741064)[0m
+[2mblock[0m 62741065  [32m1✓[0m [32m2✓[0m[32m  all hold[0m  [2m[[0m[2m[33mnonce gap: sender at 191, tx nonce 192[0m[0m[2m, [0m[2mno user txs[0m[2m][0m
+[2m  ⋮ same for 26 more blocks (through 62741091)[0m
+[2mblock[0m 62741092  [32m1✓[0m [32m2✓[0m[32m  all hold[0m  [2m[[0m[2m[33mnonce gap: sender at 191, tx nonce 192[0m[0m[2m, [0m[2mmin tip 0.001[0m[2m][0m
 
-[31m[1mEXPIRED_NONCE_GAP[0m[0m: expired after block 61012263: predicates held for 27 block(s) from 61012237, but the sender's nonce never reached 120 (an earlier nonce was missing), so the tx could not execute
-  note: eligible but not included for 27 block(s)
+[31m[1mEXPIRED_NONCE_GAP[0m[0m: expired after block 62741092: predicates held for 28 block(s) from 62741065, but the sender's nonce never reached 192 (an earlier nonce was missing), so the tx could not execute
+  note: eligible but not included for 28 block(s)
 
-[1mpredicate chain[0m[2m (27 blocks after arrival; all held together in 27)[0m
+[1mpredicate chain[0m[2m (28 blocks after arrival; all held together in 28)[0m
 [2m  #  name    held       first ✗     last value vs target[0m
-  1  funded  [32m27/27    [0m  -           0.997978863358569862 ETH vs >= 0.000000000000000001 ETH
-  2  expiry  [32m27/27    [0m  -           61012263 vs <= 61012263
+  1  funded  [32m28/28    [0m  -           0.995960532329239827 ETH vs >= 0.000000000000000001 ETH
+  2  expiry  [32m28/28    [0m  -           62741092 vs <= 62741092

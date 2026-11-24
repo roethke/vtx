@@ -1,29 +1,30 @@
-[1msent[0m [36m0x460dc72a…bbbd[0m
-[2m  from 0xYOU nonce 118, tip 0.001 gwei, head block 61011987[0m
+[1msent[0m [36m0xe05212ac…a048[0m
+[2m  from 0xYOU nonce 192, tip 0.001 gwei, head block 62742149[0m
   predicates [2m(all must hold in the same block)[0m:
-    [1m1[0m  trigger: price >= 561          storage[0xPOOL][0x0] >= 561
+    [1m1[0m  trigger: price >= 27           storage[0xPOOL][0x0] >= 27
     [1m2[0m  inventory >= 0.5 ETH           balance(0xYOU) >= 0.5 ETH
     [1m3[0m  counterparty funded            balance(0xMARKET) >= 0.000001 ETH
-    [1m4[0m  no other fill of mine first    nonce(0xYOU) = 118
+    [1m4[0m  no other fill of mine first    nonce(0xYOU) = 192
     [1m5[0m  high bits clear (packed flag)  storage[0xPOOL][0x0] & 0xffffffff00000000 = 0x0
-    [1m6[0m  band: price <= 564             storage[0xPOOL][0x0] <= 564
-    [1m7[0m  expiry                         block <= 61012047
-  expires after block 61012047
-[2mblock[0m 61011988  [31m1✗[0m [32m2✓[0m [32m3✓[0m [32m4✓[0m [32m5✓[0m [32m6✓[0m [32m7✓[0m  [31m#1 trigger: price >= 561[0m: 556, want >= 561  [2m[[0m[2mnot yet arrived[0m[2m, [0m[2mmin tip 0.00001[0m[2m][0m
-[2mblock[0m 61011989  [31m1✗[0m [32m2✓[0m [32m3✓[0m [32m4✓[0m [32m5✓[0m [32m6✓[0m [32m7✓[0m  [31m#1 trigger: price >= 561[0m: 556, want >= 561  [2m[[0m[2mmin tip 0.001[0m[2m][0m
-[2m  ⋮ same for 16 more blocks (through 61012005)[0m
-[2mblock[0m 61012006  [32m1✓[0m [32m2✓[0m [32m3✓[0m [32m4✓[0m [32m5✓[0m [31m6✗[0m [32m7✓[0m  [31m#6 band: price <= 564[0m: 576, want <= 564  [2m[[0m[2mmin tip 0.00001[0m[2m][0m
-[2m  ⋮ same for 40 more blocks (through 61012046)[0m
-[2mblock[0m 61012047  [32m1✓[0m [32m2✓[0m [32m3✓[0m [32m4✓[0m [32m5✓[0m [31m6✗[0m [32m7✓[0m  [31m#6 band: price <= 564[0m: 576, want <= 564  [2m[[0m[2mmin tip 0.0001[0m[2m][0m
+    [1m6[0m  band: price <= 30              storage[0xPOOL][0x0] <= 30
+    [1m7[0m  expiry                         block <= 62742209
+  expires after block 62742209
+[2mblock[0m 62742150  [31m1✗[0m [32m2✓[0m [32m3✓[0m [32m4✓[0m [32m5✓[0m [32m6✓[0m [32m7✓[0m  [31m#1 trigger: price >= 27[0m: 22, want >= 27  [2m[[0m[2mnot yet arrived[0m[2m, [0m[2mmin tip 0.001[0m[2m][0m
+[2m  ⋮ same for 1 more block (through 62742151)[0m
+[2mblock[0m 62742152  [31m1✗[0m [32m2✓[0m [32m3✓[0m [32m4✓[0m [32m5✓[0m [32m6✓[0m [32m7✓[0m  [31m#1 trigger: price >= 27[0m: 22, want >= 27  [2m[[0m[2mmin tip 0.001[0m[2m][0m
+[2m  ⋮ same for 25 more blocks (through 62742177)[0m
+[2mblock[0m 62742178  [32m1✓[0m [32m2✓[0m [32m3✓[0m [32m4✓[0m [32m5✓[0m [31m6✗[0m [32m7✓[0m  [31m#6 band: price <= 30[0m: 42, want <= 30  [2m[[0m[2mmin tip 0.0001[0m[2m][0m
+[2m  ⋮ same for 30 more blocks (through 62742208)[0m
+[2mblock[0m 62742209  [32m1✓[0m [32m2✓[0m [32m3✓[0m [32m4✓[0m [32m5✓[0m [31m6✗[0m [32m7✓[0m  [31m#6 band: price <= 30[0m: 42, want <= 30  [2m[[0m[2mmin tip 0.001[0m[2m][0m
 
-[31m[1mEXPIRED_PREDICATE_FALSE[0m[0m: expired after block 61012047. After the tx reached the sequencer, its predicates were never all true in the same block. The one that kept it out: #6 band: price <= 564 (last value 576)
+[31m[1mEXPIRED_PREDICATE_FALSE[0m[0m: expired after block 62742209. After the tx reached the sequencer, its predicates were never all true in the same block. The ones that kept it out: #6 band: price <= 30 failed 32/58 blocks (last value 42); #1 trigger: price >= 27 failed 26/58 blocks (last failing value 22)
 
-[1mpredicate chain[0m[2m (59 blocks after arrival; all held together in 0)[0m
+[1mpredicate chain[0m[2m (58 blocks after arrival; all held together in 0)[0m
 [2m  #  name                           held       first ✗     last value vs target[0m
-  1  trigger: price >= 561          [33m42/59    [0m  61011989    576 vs >= 561
-  2  inventory >= 0.5 ETH           [32m59/59    [0m  -           0.997979178358574246 ETH vs >= 0.5 ETH
-  3  counterparty funded            [32m59/59    [0m  -           0.001995073207605738 ETH vs >= 0.000001 ETH
-  4  no other fill of mine first    [32m59/59    [0m  -           118 vs = 118
-  5  high bits clear (packed flag)  [32m59/59    [0m  -           0x0 vs = 0x0
-  6  band: price <= 564             [33m17/59    [0m  61012006    [31m576 vs <= 564[0m
-  7  expiry                         [32m59/59    [0m  -           61012047 vs <= 61012047
+  1  trigger: price >= 27           [33m32/58    [0m  62742152    42 vs >= 27
+  2  inventory >= 0.5 ETH           [32m58/58    [0m  -           0.992960406329239735 ETH vs >= 0.5 ETH
+  3  counterparty funded            [32m58/58    [0m  -           0.004987286858134297 ETH vs >= 0.000001 ETH
+  4  no other fill of mine first    [32m58/58    [0m  -           192 vs = 192
+  5  high bits clear (packed flag)  [32m58/58    [0m  -           0x0 vs = 0x0
+  6  band: price <= 30              [33m26/58    [0m  62742178    [31m42 vs <= 30[0m
+  7  expiry                         [32m58/58    [0m  -           62742209 vs <= 62742209
